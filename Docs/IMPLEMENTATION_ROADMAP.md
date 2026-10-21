@@ -29,16 +29,16 @@ The order is driven by risk: first prove the detection logic with simulated data
 
 | # | Task | Type | Files Involved | Status |
 |---|------|------|----------------|--------|
-| 1 | Create repo, monorepo layout, CI (typecheck + tests) | `infra` | `.github/workflows/ci.yml`, `apps/web/package.json` | 📋 |
-| 2 | Shared types and Convex schema with indexes | `feat` | `shared/types.ts`, `convex/schema.ts` | 📋 |
-| 3 | Seed files with placeholder stops, 4 buses, one itinerary + timetable per bus | `feat` | `convex/seed/*`, `convex/seed.ts` | 📋 |
-| 4 | Distance, time and service-hours helpers + tests | `feat` | `convex/lib/geo.ts`, `convex/lib/time.ts` | 📋 |
-| 5 | Speed-aware geofence state machine + tests (full stop, quick stop below dwell, roll-by, jitter, overlapping-radii disambiguation) | `feat` | `convex/lib/geofence.ts`, `__tests__/geofence.test.ts` | 📋 |
+| 1 | Create repo, monorepo layout, CI (typecheck + tests) | `infra` | `.github/workflows/ci.yml`, `apps/web/package.json` | ✅ |
+| 2 | Shared types and Convex schema with indexes | `feat` | `shared/types.ts`, `convex/schema.ts` | ✅ |
+| 3 | Seed files with placeholder stops, 4 buses, one itinerary + timetable per bus | `feat` | `convex/seed/*`, `convex/seed.ts` | ✅ |
+| 4 | Distance, time and service-hours helpers + tests | `feat` | `convex/lib/geo.ts`, `convex/lib/time.ts` | ✅ |
+| 5 | Speed-aware geofence state machine + tests (full stop, quick stop below dwell, roll-by, jitter, overlapping-radii disambiguation) | `feat` | `convex/lib/geofence.ts`, `__tests__/geofence.test.ts` | ✅ |
 | 6 | Record 2–3 real GPS traces on a bus ride (any GPS logger app) as test fixtures | `chore` | `__tests__/fixtures/*.json` | 📋 |
 | 7 | Measure real coordinates of Wardini, Yves dorm, school, cafeteria | `chore` | `convex/seed/stops.ts` | 📋 |
 
 **Definition of Done:**
-- [ ] Seed is idempotent (running it twice changes nothing)
+- [x] Seed is idempotent (running it twice changes nothing)
 - [ ] Geofence tests cover arrival (full + quick at-rest stop), departure, roll-by, edge jitter and overlapping-radii disambiguation, all green in CI
 - [ ] Real coordinates entered for at least the 4 main stops
 
