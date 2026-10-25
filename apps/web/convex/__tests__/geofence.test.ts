@@ -2,7 +2,7 @@ import { describe, expect, it } from "vitest";
 import type { GeofenceEvent, GeofenceState } from "../../shared/types";
 import { stepGeofence, type GeofencePing, type GeofenceStop } from "../lib/geofence";
 
-// ponytail: synthetic traces along a north–south line. Swap in recorded GPS fixtures
+// synthetic traces along a north–south line. Swap in recorded GPS fixtures
 // (__tests__/fixtures/*.json) once real bus rides are logged (Sprint 1 task 6).
 const BASE = { lat: 14.7, lng: -17.4 };
 const M_PER_DEG_LAT = 111_195;

@@ -1,6 +1,6 @@
 import type { Config, HHmm, ISODate } from "../../shared/types";
 
-// ponytail: Africa/Dakar is UTC+0 all year with no DST, so Dakar wall-clock time is UTC.
+// Africa/Dakar is UTC+0 all year with no DST, so Dakar wall-clock time is UTC.
 // Revisit only if the service ever runs in another timezone.
 
 /** Service day (Africa/Dakar calendar date) of an instant. */

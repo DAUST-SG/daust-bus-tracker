@@ -81,7 +81,7 @@ export const loadAll = internalMutation({
         await upsert("scheduleEntries", row, { itineraryId, sequence, stopId: stopIds.get(stopCode)!, arriveBy, departAt });
         entries++;
       }
-      // ponytail: deletes visits removed from the seed. Safe while no stopEvents reference
+      // deletes visits removed from the seed. Safe while no stopEvents reference
       // them; once the pilot logs real data, retire entries via a migration instead.
       for (const extra of rows.filter((r) => r.sequence > visits.length)) {
         await ctx.db.delete(extra._id);

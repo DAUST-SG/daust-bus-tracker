@@ -39,7 +39,7 @@ The order is driven by risk: first prove the detection logic with simulated data
 
 **Definition of Done:**
 - [x] Seed is idempotent (running it twice changes nothing)
-- [ ] Geofence tests cover arrival (full + quick at-rest stop), departure, roll-by, edge jitter and overlapping-radii disambiguation, all green in CI
+- [x] Geofence tests cover arrival (full + quick at-rest stop), departure, roll-by, edge jitter and overlapping-radii disambiguation, all green in CI
 - [ ] Real coordinates entered for at least the 4 main stops
 
 ---

@@ -68,7 +68,7 @@ function pickStop(
   // Already entering: hold on to that stop until the bus leaves its exit radius, so GPS jitter
   // at the edge doesn't reset the at-rest count.
   if (state.phase === "entering" && current && inExit(current)) return current;
-  // ponytail: not near the expected stop → nearest stop in range, so an at-rest arrival there
+  // not near the expected stop → nearest stop in range, so an at-rest arrival there
   // can be logged `unscheduled` (D6). Overlaps between non-expected stops are a data issue.
   return inEntry.sort((a, b) => dist(a) - dist(b))[0];
 }

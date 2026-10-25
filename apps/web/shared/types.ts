@@ -1,6 +1,6 @@
 // Types shared by web + convex. Ids are plain strings so the pure logic in
 // convex/lib/* can be tested without a database.
-// ponytail: only the types Sprint 1 uses; API inputs and read models land with
+// only the types Sprint 1 uses; API inputs and read models land with
 // the code that needs them (Sprint 2 / 4), per Docs/TECHNICAL_ROADMAP.md §2.
 
 // ---------- Enumerations ----------
