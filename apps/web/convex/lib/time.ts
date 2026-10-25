@@ -26,3 +26,10 @@ export function isWithinServiceHours(ms: number, config: Pick<Config, "serviceHo
     (w) => w.days.includes(day) && ms >= hhmmToMs(date, w.start) && ms < hhmmToMs(date, w.end),
   );
 }
+
+/** End instant of the latest service window on `date`'s weekday, or null if none runs that day. */
+export function serviceEndMs(date: ISODate, config: Pick<Config, "serviceHours">): number | null {
+  const day = isoWeekday(hhmmToMs(date, "12:00"));
+  const ends = config.serviceHours.filter((w) => w.days.includes(day)).map((w) => hhmmToMs(date, w.end));
+  return ends.length ? Math.max(...ends) : null;
+}

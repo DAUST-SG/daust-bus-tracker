@@ -42,6 +42,16 @@ export const provision = internalMutation({
   },
 });
 
+/** Record device metadata captured at pairing. */
+export const recordPairing = internalMutation({
+  args: { deviceId: v.id("devices"), deviceModel: v.string(), androidVersion: v.string(), appVersion: v.string() },
+  returns: v.null(),
+  handler: async (ctx, args) => {
+    await ctx.db.patch(args.deviceId, { deviceModel: args.deviceModel, androidVersion: args.androidVersion, appVersion: args.appVersion, lastSeenAt: Date.now() });
+    return null;
+  },
+});
+
 export const revoke = internalMutation({
   args: { deviceId: v.id("devices") },
   returns: v.null(),

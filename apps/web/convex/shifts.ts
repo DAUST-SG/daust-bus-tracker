@@ -5,7 +5,7 @@ import { internalMutation, internalQuery, type MutationCtx, type QueryCtx } from
 import { v, ConvexError } from "convex/values";
 import type { Doc, Id } from "./_generated/dataModel";
 import type { BusStatusView, Config, ScheduleEntry, Stop } from "../shared/types";
-import { dakarDate, isWithinServiceHours, isoWeekday } from "./lib/time";
+import { dakarDate, isWithinServiceHours, isoWeekday, serviceEndMs } from "./lib/time";
 import { nextExpectedEntry } from "./lib/schedule";
 import { deriveBusStatusView } from "./lib/status";
 
@@ -37,7 +37,7 @@ async function loadRefs(ctx: MutationCtx, itineraryId: Id<"itineraries">) {
 
 export const start = internalMutation({
   args: { deviceId: v.id("devices"), busId: v.id("buses"), itineraryId: v.id("itineraries"), startedAt: v.number() },
-  returns: v.object({ shiftId: v.id("shifts"), status: v.any() }),
+  returns: v.object({ shiftId: v.id("shifts"), status: v.any(), serviceEndsAt: v.union(v.number(), v.null()) }),
   handler: async (ctx, args) => {
     const existing = await activeShift(ctx, args.busId);
     if (existing) {
@@ -114,7 +114,7 @@ export const start = internalMutation({
       config,
     }) as BusStatusView;
 
-    return { shiftId, status };
+    return { shiftId, status, serviceEndsAt: serviceEndMs(date, config) };
   },
 });
 
