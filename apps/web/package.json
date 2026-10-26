@@ -7,10 +7,13 @@
     "test": "vitest run"
   },
   "dependencies": {
+    "@convex-dev/rate-limiter": "^0.4.2",
     "convex": "^1.47.0"
   },
   "devDependencies": {
+    "@edge-runtime/vm": "^5.0.0",
     "@types/node": "^22.20.5",
+    "convex-test": "^0.0.65",
     "typescript": "^5.9.3",
     "vitest": "^3.2.7"
   }

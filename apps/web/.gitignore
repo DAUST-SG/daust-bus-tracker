@@ -1,3 +1,11 @@
 node_modules/
 .env.local
 .convex/
+
+# Convex "AI guidelines" scaffolding (auto-created by `convex dev`); not part of the project
+AGENTS.md
+CLAUDE.md
+.agents/
+.claude/
+skills-lock.json
+convex/_generated/ai/

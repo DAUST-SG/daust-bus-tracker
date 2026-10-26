@@ -33,14 +33,15 @@ refactor(status): move status sentence builder to lib/statusText
 ## Development Workflow
 
 1. Pick or create an issue; assign yourself and move it to "In Progress".
-2. `git checkout dev && git pull`, then create `feat/<short-name>`.
-3. Run `npx convex dev` (your own dev deployment) and `npm run dev`; use `scripts/fake-bus.ts` to simulate a bus instead of riding one.
-4. Write or update tests for any logic in `convex/lib/*` before changing it.
-5. Run `npm run typecheck && npm test` (web/convex) or `./gradlew test assembleDebug` (Android) locally.
-6. Open a pull request into `dev` with: what changed, why, how you tested it, and screenshots for UI changes.
-7. One core-member review is required; CI must be green.
-8. Squash-merge; delete the branch.
-9. Seed data changes (stops, timetables) also need a note in the PR saying where the new values came from (measured on site, from Student Affairs, from pilot data).
+2. **Before working on your area, read the matching skill in [`skills/`](skills/README.md)** (e.g. `convex-functions` for backend, `vercel-*` for the web app). Project docs win over any skill default.
+3. `git checkout dev && git pull`, then create `feat/<short-name>`.
+4. Run `npx convex dev` (your own dev deployment) and `npm run dev`; use `scripts/fake-bus.ts` to simulate a bus instead of riding one.
+5. Write or update tests for any logic in `convex/lib/*` before changing it.
+6. Run `npm run typecheck && npm test` (web/convex) or `./gradlew test assembleDebug` (Android) locally.
+7. Open a pull request into `dev` with: what changed, why, how you tested it, and screenshots for UI changes.
+8. One core-member review is required; CI must be green.
+9. Squash-merge; delete the branch.
+10. Seed data changes (stops, timetables) also need a note in the PR saying where the new values came from (measured on site, from Student Affairs, from pilot data).
 
 ## Code Standards
 
