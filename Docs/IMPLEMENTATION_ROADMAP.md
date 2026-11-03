@@ -50,18 +50,18 @@ The order is driven by risk: first prove the detection logic with simulated data
 
 | # | Task | Type | Files Involved | Status |
 |---|------|------|----------------|--------|
-| 1 | Sequence-forward schedule matching + pointer anchoring, delays, flags + tests (on time, late bound to attempted visit, early-only-if-not-late, `undetected` skip, loops) | `feat` | `convex/lib/schedule.ts` | 📋 |
-| 2 | Status derivation (serviceStatus/motion/connectivity + derived label) incl. "running late" before arrival + tests | `feat` | `convex/lib/status.ts` | 📋 |
-| 3 | Device tokens: hash, provision, revoke, `requireDevice` | `feat` | `convex/auth.ts`, `convex/devices.ts` | 📋 |
-| 4 | Shift start/end, ingest mutation, bus state mutation | `feat` | `convex/shifts.ts`, `convex/ingest.ts`, `convex/busState.ts` | 📋 |
-| 5 | HTTP router + driver/public endpoints + rate limits | `feat` | `convex/http.ts`, `driverApi.ts`, `publicApi.ts`, `rateLimits.ts` | 📋 |
-| 6 | Crons: signal lost (sets `connectivity` only + `onSignalLost` no-op stub), close shifts after hours, purge pings | `feat` | `convex/crons.ts`, `convex/busState.ts` | 📋 |
-| 7 | Fake-bus replay script | `chore` | `apps/web/scripts/fake-bus.ts` | 📋 |
+| 1 | Sequence-forward schedule matching + pointer anchoring, delays, flags + tests (on time, late bound to attempted visit, early-only-if-not-late, `undetected` skip, loops) | `feat` | `convex/lib/schedule.ts` | ✅ |
+| 2 | Status derivation (serviceStatus/motion/connectivity + derived label) incl. "running late" before arrival + tests | `feat` | `convex/lib/status.ts` | ✅ |
+| 3 | Device tokens: hash, provision, revoke, `requireDevice` | `feat` | `convex/auth.ts`, `convex/devices.ts` | ✅ |
+| 4 | Shift start/end, ingest mutation, bus state mutation | `feat` | `convex/shifts.ts`, `convex/ingest.ts`, `convex/busState.ts` | ✅ |
+| 5 | HTTP router + driver/public endpoints + rate limits | `feat` | `convex/http.ts`, `driverApi.ts`, `publicApi.ts`, `rateLimits.ts` | ✅ |
+| 6 | Crons: signal lost (sets `connectivity` only + `onSignalLost` no-op stub), close shifts after hours, purge pings | `feat` | `convex/crons.ts`, `convex/busState.ts` | ✅ |
+| 7 | Fake-bus replay script | `chore` | `apps/web/scripts/fake-bus.ts` | ✅ |
 
 **Definition of Done:**
-- [ ] Every endpoint in `API_CONTRACT.md` returns the documented shapes
-- [ ] Replaying a trace twice produces no duplicate stop events
-- [ ] Stopping the fake bus flips `connectivity` to `signal_lost` within 6 minutes (serviceStatus unchanged)
+- [x] Every endpoint in `API_CONTRACT.md` returns the documented shapes
+- [x] Replaying a trace twice produces no duplicate stop events
+- [x] Stopping the fake bus flips `connectivity` to `signal_lost` within 6 minutes (serviceStatus unchanged)
 - [ ] Official timetables requested from Student Affairs (⏸ if not received)
 
 ---
