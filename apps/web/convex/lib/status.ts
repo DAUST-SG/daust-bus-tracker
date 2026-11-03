@@ -63,7 +63,7 @@ export function deriveBusStatusView(input: {
     motion,
     connectivity,
     label: buildLabel({ status, connectivity, motion, currentStopName, lastStopName, nextStopName, punctuality, reason }),
-    itinerary: itinerary ? { name: itinerary.name, isTemporary: itinerary.isTemporary } : null,
+    itinerary: !offShift && itinerary ? { name: itinerary.name, isTemporary: itinerary.isTemporary } : null,
     currentStop,
     lastStop,
     nextStop,

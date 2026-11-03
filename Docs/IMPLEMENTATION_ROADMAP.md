@@ -95,8 +95,8 @@ The order is driven by risk: first prove the detection logic with simulated data
 
 | # | Task | Type | Files Involved | Status |
 |---|------|------|----------------|--------|
-| 1 | Convex provider, `useBusStatuses`, `useNow` | `feat` | `ConvexClientProvider.tsx`, `hooks/*` | 📋 |
-| 2 | Status list + status line + badges + "updated X ago" | `feat` | `app/page.tsx`, `components/BusStatus*.tsx`, `lib/statusText.ts` | 📋 |
+| 1 | Convex provider, `useBusStatuses`, `useNow` | `feat` | `ConvexClientProvider.tsx`, `hooks/useNow.ts` | ✅ |
+| 2 | Status list + status line + badges + "updated X ago" | `feat` | `app/page.tsx`, `components/BusStatusList.tsx`, `lib/statusText.ts` | ✅ |
 | 3 | Tune radii and dwell times using Sprint 3 data | `chore` | `convex/seed/stops.ts` | 📋 |
 | 4 | Pair Bus 2–4 (school tablet if a driver has no Android phone) | `chore` | — | 📋 |
 | 5 | Deploy web to Vercel, production Convex deployment | `infra` | Vercel / Convex settings | 📋 |
@@ -106,6 +106,8 @@ The order is driven by risk: first prove the detection logic with simulated data
 - [ ] Page loads in < 3 s on a throttled 3G profile, readable at 360 px width
 - [ ] All 4 buses show live status during service hours
 - [ ] Baseline survey has ≥ 50 responses
+
+> Tasks 1–2: `useQuery` is called directly in `BusStatusList.tsx` (no `useBusStatuses` wrapper); badges and the status line live in the same file; plain CSS instead of Tailwind. `status.list` now lists every active bus, including ones that never ran a shift.
 
 ---
 

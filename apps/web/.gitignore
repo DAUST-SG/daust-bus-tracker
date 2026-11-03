@@ -9,3 +9,6 @@ CLAUDE.md
 .claude/
 skills-lock.json
 convex/_generated/ai/
+.next/
+next-env.d.ts
+*.tsbuildinfo

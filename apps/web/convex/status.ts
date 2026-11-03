@@ -20,12 +20,13 @@ export const list = query({
     const config = (await ctx.db.query("config").first()) as unknown as Config | null;
     if (!config) return [];
     const stopsById = await stopsMap(ctx);
-    const statuses = await ctx.db.query("busStatus").withIndex("by_bus", (q) => q).collect();
+    const buses = (await ctx.db.query("buses").collect()).filter((b) => b.isActive);
 
     const views: BusStatusView[] = [];
-    for (const status of statuses) {
-      const bus = await ctx.db.get(status.busId);
-      if (!bus) continue;
+    for (const bus of buses) {
+      // A bus that never ran a shift has no busStatus row yet: list it as off shift.
+      const status = (await ctx.db.query("busStatus").withIndex("by_bus", (q) => q.eq("busId", bus._id)).unique()) ??
+        { busId: bus._id, serviceStatus: "off_shift" as const, connectivity: "live" as const, geofence: { phase: "outside" as const }, updatedAt: 0, itineraryId: undefined };
       const itinerary = status.itineraryId ? await ctx.db.get(status.itineraryId) : null;
       const entries = status.itineraryId
         ? ((await ctx.db.query("scheduleEntries").withIndex("by_itinerary_sequence", (q) => q.eq("itineraryId", status.itineraryId!)).collect()) as unknown as ScheduleEntry[])
