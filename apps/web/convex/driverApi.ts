@@ -22,6 +22,10 @@ function mapError(e: unknown): Response {
     const d = e.data as { code: string; message: string; details?: Record<string, unknown> };
     return err(STATUS_FOR[d.code] ?? 500, d.code, d.message, d.details);
   }
+  // A body field of the wrong type (e.g. lat: null) fails the internal function's validator: client error, not 500.
+  if (e instanceof Error && e.message.includes("ArgumentValidationError")) {
+    return err(400, "VALIDATION_ERROR", e.message.slice(e.message.indexOf("ArgumentValidationError")).split("\n").slice(0, 3).join(" "));
+  }
   return err(500, "INTERNAL_ERROR", "Unexpected server error.");
 }
 
