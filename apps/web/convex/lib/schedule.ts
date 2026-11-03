@@ -95,7 +95,8 @@ export function nextExpectedEntry(
   if (first.arriveBy === undefined) return first; // timetable-less → by sequence
 
   const floor = now - config.lateGraceMinutes * MIN;
-  return unvisited.find((e) => e.arriveBy !== undefined && hhmmToMs(date, e.arriveBy) >= floor) ?? first;
+  // Every slot already elapsed → no next stop (else an evening bus shows "next: 08:00", "600 min late").
+  return unvisited.find((e) => e.arriveBy !== undefined && hhmmToMs(date, e.arriveBy) >= floor) ?? null;
 }
 
 /** Minutes late when the bus is past `arriveBy + grace` and has not arrived; null otherwise. */

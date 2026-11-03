@@ -111,8 +111,8 @@ describe("nextExpectedEntry — anchor by scheduled time", () => {
   it("late start skips past the stop whose slot already elapsed", () => {
     expect(nextExpectedEntry(entries, new Set(), t("08:12"), DATE, config)?._id).toBe("e2");
   });
-  it("all slots past → falls back to the earliest unvisited", () => {
-    expect(nextExpectedEntry(entries, new Set(), t("09:30"), DATE, config)?._id).toBe("e1");
+  it("all slots past → no next stop", () => {
+    expect(nextExpectedEntry(entries, new Set(), t("09:30"), DATE, config)).toBeNull();
   });
   it("timetable-less itinerary anchors by sequence", () => {
     const loose = [E("a", 1, "WARDINI"), E("b", 2, "SCHOOL")];
