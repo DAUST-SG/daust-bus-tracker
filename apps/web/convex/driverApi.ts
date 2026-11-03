@@ -6,7 +6,7 @@ import { ConvexError } from "convex/values";
 import type { Id } from "./_generated/dataModel";
 import type { PingInput } from "../shared/types";
 import { requireDevice, type AuthResult } from "./auth";
-import { rateLimiter } from "./rateLimits";
+import { clientIp, rateLimiter, tooManyRequests } from "./rateLimits";
 
 const headers = { "Content-Type": "application/json" };
 const json = (data: unknown, status = 200) => new Response(JSON.stringify(data), { status, headers });
@@ -35,8 +35,15 @@ async function body(req: Request): Promise<Record<string, unknown>> {
 const fail = (a: Extract<AuthResult, { ok: false }>) => err(a.status, a.code, a.message);
 
 export const pair = httpAction(async (ctx, req) => {
+  // 5 bad tokens per IP per 15 min. Checked before the lookup so a blocked IP learns nothing more.
+  const ip = clientIp(req);
+  const gate = await rateLimiter.check(ctx, "pairFail", { key: ip });
+  if (!gate.ok) return tooManyRequests(gate.retryAfter, headers);
   const auth = await requireDevice(ctx, req);
-  if (!auth.ok) return fail(auth);
+  if (!auth.ok) {
+    await rateLimiter.limit(ctx, "pairFail", { key: ip });
+    return fail(auth);
+  }
   const b = await body(req);
   if (typeof b.deviceModel !== "string") return err(400, "VALIDATION_ERROR", "deviceModel, androidVersion and appVersion are required.");
   await ctx.runMutation(internal.devices.recordPairing, {
@@ -52,7 +59,7 @@ export const getConfig = httpAction(async (ctx, req) => {
   const auth = await requireDevice(ctx, req);
   if (!auth.ok) return fail(auth);
   const rl = await rateLimiter.limit(ctx, "driver", { key: auth.device._id });
-  if (!rl.ok) return err(429, "RATE_LIMITED", "Too many requests.", { retryAfterSeconds: Math.ceil((rl.retryAfter ?? 0) / 1000) });
+  if (!rl.ok) return tooManyRequests(rl.retryAfter, headers);
   const data = await ctx.runQuery(internal.driverData.getConfig, { busId: auth.bus._id, now: Date.now() });
   if (!data) return err(500, "NO_CONFIG", "Config not seeded.");
   return json(data);
@@ -62,7 +69,7 @@ export const startShift = httpAction(async (ctx, req) => {
   const auth = await requireDevice(ctx, req);
   if (!auth.ok) return fail(auth);
   const rl = await rateLimiter.limit(ctx, "driver", { key: auth.device._id });
-  if (!rl.ok) return err(429, "RATE_LIMITED", "Too many requests.", { retryAfterSeconds: Math.ceil((rl.retryAfter ?? 0) / 1000) });
+  if (!rl.ok) return tooManyRequests(rl.retryAfter, headers);
   const b = await body(req);
   if (typeof b.itineraryId !== "string" || typeof b.startedAt !== "number") return err(400, "VALIDATION_ERROR", "itineraryId and startedAt are required.");
   try {
@@ -82,7 +89,7 @@ export const endShift = httpAction(async (ctx, req) => {
   const auth = await requireDevice(ctx, req);
   if (!auth.ok) return fail(auth);
   const rl = await rateLimiter.limit(ctx, "driver", { key: auth.device._id });
-  if (!rl.ok) return err(429, "RATE_LIMITED", "Too many requests.", { retryAfterSeconds: Math.ceil((rl.retryAfter ?? 0) / 1000) });
+  if (!rl.ok) return tooManyRequests(rl.retryAfter, headers);
   const b = await body(req);
   if (typeof b.endedAt !== "number") return err(400, "VALIDATION_ERROR", "endedAt is required.");
   const reason = b.reason === "service_hours_over" ? "service_hours_over" : "driver";
@@ -101,7 +108,7 @@ export const postPings = httpAction(async (ctx, req) => {
   if (!Array.isArray(b.pings)) return err(400, "VALIDATION_ERROR", "pings[] is required.");
   if (b.pings.length > 50) return err(413, "BATCH_TOO_LARGE", "A batch may contain at most 50 pings.", { received: b.pings.length });
   const rl = await rateLimiter.limit(ctx, "pings", { key: auth.device._id });
-  if (!rl.ok) return err(429, "RATE_LIMITED", "Too many requests.", { retryAfterSeconds: Math.ceil((rl.retryAfter ?? 0) / 1000) });
+  if (!rl.ok) return tooManyRequests(rl.retryAfter, headers);
   try {
     const r = await ctx.runMutation(internal.ingest.ingestPings, {
       deviceId: auth.device._id,
@@ -119,7 +126,7 @@ export const patchState = httpAction(async (ctx, req) => {
   const auth = await requireDevice(ctx, req);
   if (!auth.ok) return fail(auth);
   const rl = await rateLimiter.limit(ctx, "driver", { key: auth.device._id });
-  if (!rl.ok) return err(429, "RATE_LIMITED", "Too many requests.", { retryAfterSeconds: Math.ceil((rl.retryAfter ?? 0) / 1000) });
+  if (!rl.ok) return tooManyRequests(rl.retryAfter, headers);
   const b = await body(req);
   if (b.serviceStatus !== "out_of_service" && b.serviceStatus !== "in_service") return err(400, "VALIDATION_ERROR", "serviceStatus must be out_of_service or in_service.");
   try {

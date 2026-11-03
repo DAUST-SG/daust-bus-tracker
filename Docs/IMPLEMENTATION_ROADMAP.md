@@ -109,6 +109,8 @@ The order is driven by risk: first prove the detection logic with simulated data
 
 > Tasks 1–2: `useQuery` is called directly in `BusStatusList.tsx` (no `useBusStatuses` wrapper); badges and the status line live in the same file; plain CSS instead of Tailwind. `status.list` now lists every active bus, including ones that never ran a shift.
 
+> Load check (Nov 3, local build, `scripts/load3g.mjs`, first visit, 360 px): buses visible at 1.2 s on DevTools "Fast 3G" and 4.1 s on "Slow 3G" (2 s round trips: two of them before any byte arrives), live updates from 2.1 s / 7.5 s, 162 KB total, no horizontal scroll. Statuses are server-rendered into the HTML. Re-run against the Vercel URL before ticking the first item.
+
 ---
 
 #### Sprint 5 — P1 features (Nov 16–22) · pilot week 1

@@ -6,11 +6,11 @@ import type { BusStatusView } from "../shared/types";
 import { useNow } from "../hooks/useNow";
 import { punctualityBadge, stateBadge, statusSentence, updatedText, type Tone } from "../lib/statusText";
 
-export function BusStatusList() {
+export function BusStatusList({ initial }: { initial?: BusStatusView[] }) {
   const now = useNow(1000);
   // Re-run the query once a minute too, so "stale" and running-late appear even when no ping arrives.
   const fresh = useQuery(api.status.list, { now: Math.floor(now / 60_000) * 60_000 }) as BusStatusView[] | undefined;
-  const last = useRef(fresh);
+  const last = useRef(fresh ?? initial);
   if (fresh !== undefined) last.current = fresh; // keep the old list while the new minute loads (no flicker)
   const buses = fresh ?? last.current;
 
@@ -37,14 +37,15 @@ function BusStatusLine({ view, now }: { view: BusStatusView; now: number }) {
         <Badge {...state} />
         {punctuality && <Badge {...punctuality} />}
       </div>
-      {sentence && <p className="sentence">{sentence}</p>}
+      {sentence && <p className="sentence" suppressHydrationWarning>{sentence}</p>}
       {view.itinerary && (
         <p className="muted">
           {view.itinerary.name}
           {view.itinerary.isTemporary && " · temporary route"}
         </p>
       )}
-      {updated && <p className={view.connectivity === "live" ? "muted" : "stale"}>{updated}</p>}
+      {/* relative times differ by a few seconds between server and browser clocks */}
+      {updated && <p className={view.connectivity === "live" ? "muted" : "stale"} suppressHydrationWarning>{updated}</p>}
     </li>
   );
 }
