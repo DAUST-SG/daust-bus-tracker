@@ -10,6 +10,10 @@ export const rateLimiter = new RateLimiter(components.rateLimiter, {
   pairFail: { kind: "fixed window", rate: 5, period: 15 * MINUTE },
 });
 
+/** `.catch(overLimit)` on every limit call: a burst on one key makes the limiter's own writes conflict,
+ *  and that caller is over its limit anyway, so it gets a 429 instead of a 500. */
+export const overLimit = () => ({ ok: false as const, retryAfter: 1000 });
+
 /** Caller IP for per-IP limits. The last x-forwarded-for entry is the one added by the proxy in front
  *  of Convex; earlier entries are whatever the client sent, so keying on them lets anyone dodge the limit. */
 export function clientIp(req: Request): string {

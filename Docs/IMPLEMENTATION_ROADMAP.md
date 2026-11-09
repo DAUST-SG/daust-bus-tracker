@@ -99,17 +99,19 @@ The order is driven by risk: first prove the detection logic with simulated data
 | 2 | Status list + status line + badges + "updated X ago" | `feat` | `app/page.tsx`, `components/BusStatusList.tsx`, `lib/statusText.ts` | ✅ |
 | 3 | Tune radii and dwell times using Sprint 3 data | `chore` | `convex/seed/stops.ts` | 📋 |
 | 4 | Pair Bus 2–4 (school tablet if a driver has no Android phone) | `chore` | — | 📋 |
-| 5 | Deploy web to Vercel, production Convex deployment | `infra` | Vercel / Convex settings | 📋 |
+| 5 | Deploy web to Vercel, production Convex deployment | `infra` | Vercel / Convex settings | ✅ |
 | 6 | Pre-launch survey to students (baseline) | `chore` | — | 📋 |
 
 **Definition of Done:**
-- [ ] Page loads in < 3 s on a throttled 3G profile, readable at 360 px width
+- [x] Page loads in < 3 s on a throttled 3G profile, readable at 360 px width
 - [ ] All 4 buses show live status during service hours
 - [ ] Baseline survey has ≥ 50 responses
 
 > Tasks 1–2: `useQuery` is called directly in `BusStatusList.tsx` (no `useBusStatuses` wrapper); badges and the status line live in the same file; plain CSS instead of Tailwind. `status.list` now lists every active bus, including ones that never ran a shift.
 
-> Load check (Nov 3, local build, `scripts/load3g.mjs`, first visit, 360 px): buses visible at 1.2 s on DevTools "Fast 3G" and 4.1 s on "Slow 3G" (2 s round trips: two of them before any byte arrives), live updates from 2.1 s / 7.5 s, 162 KB total, no horizontal scroll. Statuses are server-rendered into the HTML. Re-run against the Vercel URL before ticking the first item.
+> Load check (Nov 3, local build, `scripts/load3g.mjs`, first visit, 360 px): buses visible at 1.2 s on DevTools "Fast 3G" and 4.1 s on "Slow 3G" (2 s round trips: two of them before any byte arrives), live updates from 2.1 s / 7.5 s, 162 KB total, no horizontal scroll. Statuses are server-rendered into the HTML.
+
+> Deployed Nov 9: web at https://daust-bus-tracker.vercel.app (Vercel project `daust-sg/daust-bus-tracker`), Convex project `daust-sg/daust-bus-tracker` (prod `prestigious-grasshopper-641`, dev `gallant-walrus-57`), prod seeded with `seed:loadAll`. Live load check: buses at 1.4 s on Fast 3G, 4.2 s on Slow 3G, 164 KB, no horizontal scroll. On Convex cloud `x-forwarded-for` is overwritten with the real client IP (Cloudflare), so a spoofed header does not dodge the /status limit; a 20-way parallel burst now gets 429s, not 500s from limiter write conflicts.
 
 ---
 

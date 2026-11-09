@@ -6,7 +6,7 @@ import { ConvexError } from "convex/values";
 import type { Id } from "./_generated/dataModel";
 import type { PingInput } from "../shared/types";
 import { requireDevice, type AuthResult } from "./auth";
-import { clientIp, rateLimiter, tooManyRequests } from "./rateLimits";
+import { clientIp, overLimit, rateLimiter, tooManyRequests } from "./rateLimits";
 
 const headers = { "Content-Type": "application/json" };
 const json = (data: unknown, status = 200) => new Response(JSON.stringify(data), { status, headers });
@@ -41,7 +41,7 @@ export const pair = httpAction(async (ctx, req) => {
   if (!gate.ok) return tooManyRequests(gate.retryAfter, headers);
   const auth = await requireDevice(ctx, req);
   if (!auth.ok) {
-    await rateLimiter.limit(ctx, "pairFail", { key: ip });
+    await rateLimiter.limit(ctx, "pairFail", { key: ip }).catch(overLimit);
     return fail(auth);
   }
   const b = await body(req);
@@ -58,7 +58,7 @@ export const pair = httpAction(async (ctx, req) => {
 export const getConfig = httpAction(async (ctx, req) => {
   const auth = await requireDevice(ctx, req);
   if (!auth.ok) return fail(auth);
-  const rl = await rateLimiter.limit(ctx, "driver", { key: auth.device._id });
+  const rl = await rateLimiter.limit(ctx, "driver", { key: auth.device._id }).catch(overLimit);
   if (!rl.ok) return tooManyRequests(rl.retryAfter, headers);
   const data = await ctx.runQuery(internal.driverData.getConfig, { busId: auth.bus._id, now: Date.now() });
   if (!data) return err(500, "NO_CONFIG", "Config not seeded.");
@@ -68,7 +68,7 @@ export const getConfig = httpAction(async (ctx, req) => {
 export const startShift = httpAction(async (ctx, req) => {
   const auth = await requireDevice(ctx, req);
   if (!auth.ok) return fail(auth);
-  const rl = await rateLimiter.limit(ctx, "driver", { key: auth.device._id });
+  const rl = await rateLimiter.limit(ctx, "driver", { key: auth.device._id }).catch(overLimit);
   if (!rl.ok) return tooManyRequests(rl.retryAfter, headers);
   const b = await body(req);
   if (typeof b.itineraryId !== "string" || typeof b.startedAt !== "number") return err(400, "VALIDATION_ERROR", "itineraryId and startedAt are required.");
@@ -88,7 +88,7 @@ export const startShift = httpAction(async (ctx, req) => {
 export const endShift = httpAction(async (ctx, req) => {
   const auth = await requireDevice(ctx, req);
   if (!auth.ok) return fail(auth);
-  const rl = await rateLimiter.limit(ctx, "driver", { key: auth.device._id });
+  const rl = await rateLimiter.limit(ctx, "driver", { key: auth.device._id }).catch(overLimit);
   if (!rl.ok) return tooManyRequests(rl.retryAfter, headers);
   const b = await body(req);
   if (typeof b.endedAt !== "number") return err(400, "VALIDATION_ERROR", "endedAt is required.");
@@ -107,7 +107,7 @@ export const postPings = httpAction(async (ctx, req) => {
   const b = await body(req);
   if (!Array.isArray(b.pings)) return err(400, "VALIDATION_ERROR", "pings[] is required.");
   if (b.pings.length > 50) return err(413, "BATCH_TOO_LARGE", "A batch may contain at most 50 pings.", { received: b.pings.length });
-  const rl = await rateLimiter.limit(ctx, "pings", { key: auth.device._id });
+  const rl = await rateLimiter.limit(ctx, "pings", { key: auth.device._id }).catch(overLimit);
   if (!rl.ok) return tooManyRequests(rl.retryAfter, headers);
   try {
     const r = await ctx.runMutation(internal.ingest.ingestPings, {
@@ -125,7 +125,7 @@ export const postPings = httpAction(async (ctx, req) => {
 export const patchState = httpAction(async (ctx, req) => {
   const auth = await requireDevice(ctx, req);
   if (!auth.ok) return fail(auth);
-  const rl = await rateLimiter.limit(ctx, "driver", { key: auth.device._id });
+  const rl = await rateLimiter.limit(ctx, "driver", { key: auth.device._id }).catch(overLimit);
   if (!rl.ok) return tooManyRequests(rl.retryAfter, headers);
   const b = await body(req);
   if (b.serviceStatus !== "out_of_service" && b.serviceStatus !== "in_service") return err(400, "VALIDATION_ERROR", "serviceStatus must be out_of_service or in_service.");

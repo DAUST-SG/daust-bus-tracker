@@ -12,3 +12,4 @@ convex/_generated/ai/
 .next/
 next-env.d.ts
 *.tsbuildinfo
+.vercel
