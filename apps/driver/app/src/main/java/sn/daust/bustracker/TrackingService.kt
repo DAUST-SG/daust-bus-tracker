@@ -154,7 +154,15 @@ class TrackingService : Service() {
         while (true) {
             val batch = Graph.queue.oldest(BATCH_MAX)
             if (batch.isEmpty()) return
-            val res = Graph.api.pings(JSONArray(batch.map { it.second }), heartbeat())
+            val res = try {
+                Graph.api.pings(JSONArray(batch.map { it.second }), heartbeat())
+            } catch (e: ApiError) {
+                // 400 = the server will never accept this batch; retrying it would block every newer point.
+                // ponytail: drops the whole batch (up to BATCH_MAX points); bisect it if 400s turn out to be common.
+                if (e.http != 400) throw e
+                Graph.queue.delete(batch.map { it.first })
+                continue
+            }
             Graph.queue.delete(batch.map { it.first })
             val now = System.currentTimeMillis()
             Graph.store.lastUploadAt = now
