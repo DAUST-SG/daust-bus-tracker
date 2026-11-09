@@ -72,13 +72,13 @@ The order is driven by risk: first prove the detection logic with simulated data
 
 | # | Task | Type | Files Involved | Status |
 |---|------|------|----------------|--------|
-| 1 | Android project, manifest permissions, notification channel | `infra` | `AndroidManifest.xml`, `BusTrackerApp.kt`, `build.gradle.kts` | 📋 |
-| 2 | Pairing screen + encrypted token store + config fetch | `feat` | `PairingScreen.kt`, `TokenStore.kt`, `BusApi.kt`, `ShiftRepository.kt` | 📋 |
-| 3 | Foreground location service + accuracy filter | `feat` | `TrackingService.kt`, `LocationSource.kt` | 📋 |
-| 4 | Room queue + batch uploader with backoff | `feat` | `AppDatabase.kt`, `PingDao.kt`, `Uploader.kt` | 📋 |
-| 5 | Shift screen (start/stop, itinerary picker, queued count) | `feat` | `ShiftScreen.kt`, `ShiftViewModel.kt` | 📋 |
-| 6 | Setup screen: battery-optimisation exemption + brand-specific tips | `feat` | `SetupScreen.kt` | 📋 |
-| 7 | Service-hours auto-stop + resume after reboot | `feat` | `ServiceHoursGuard.kt`, `BootReceiver.kt` | 📋 |
+| 1 | Android project, manifest permissions, notification channel | `infra` | `AndroidManifest.xml`, `BusTrackerApp.kt`, `build.gradle.kts` | 🔄 |
+| 2 | Pairing screen + encrypted token store + config fetch | `feat` | `PairingScreen.kt`, `TokenStore.kt`, `BusApi.kt` | 🔄 |
+| 3 | Foreground location service + accuracy filter | `feat` | `TrackingService.kt` | 🔄 |
+| 4 | SQLite queue + batch uploader with backoff | `feat` | `PingQueue.kt`, `ShiftRules.kt`, `TrackingService.kt` | 🔄 |
+| 5 | Shift screen (start/stop, itinerary picker, queued count) | `feat` | `ShiftScreen.kt` | 🔄 |
+| 6 | Setup screen: battery-optimisation exemption + brand-specific tips | `feat` | `SetupScreen.kt` | 🔄 |
+| 7 | Service-hours auto-stop + resume after reboot | `feat` | `TrackingService.kt`, `BootReceiver.kt` | 🔄 |
 | 8 | Meet drivers, explain the app, collect consent; install on Bus 1 | `chore` | — | 📋 |
 
 **Definition of Done:**
@@ -86,6 +86,8 @@ The order is driven by risk: first prove the detection logic with simulated data
 - [ ] Airplane mode for 10 min: queued positions arrive in order afterwards
 - [ ] Tracking stops by itself at the end of service hours
 - [ ] Driver consent recorded
+
+> Tasks 1–7: code written in `apps/driver/` but not yet compiled or run on a phone; build steps in `apps/driver/README.md`. Room/OkHttp/ViewModel replaced by platform SQLite, `HttpURLConnection` and a `Graph` singleton (fewer dependencies). The out-of-service dialog (Sprint 5 task 3) is already in `ShiftScreen.kt`.
 
 ---
 
